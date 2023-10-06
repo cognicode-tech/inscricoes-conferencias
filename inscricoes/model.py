@@ -3,9 +3,12 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel, create_engine
 
+from inscricoes.settings import DB_ENGINE_URL
 
-def get_sql_engine():
-    engine = create_engine("sqlite:///data/inscricoes.db")
+
+def get_sql_engine(engine_url: str | None = None, db_name: str = "inscricoes"):
+    engine_url = DB_ENGINE_URL if engine_url is None else engine_url
+    engine = create_engine(engine_url, echo=True)
     SQLModel.metadata.create_all(engine)
 
     return engine
