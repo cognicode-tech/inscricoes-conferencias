@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from inscricoes.model import Conferencia, Inscricao, Participante, get_sql_engine
+from inscricoes.db.model import Conferencia, Inscricao, Participante, get_sql_engine
 
 
 def create_conferencia(conferencia: Conferencia, engine=None):

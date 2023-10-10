@@ -1,7 +1,7 @@
 import pytest
 from sqlmodel import Session, create_engine
 
-from inscricoes.crud import (
+from inscricoes.db.crud import (
     create_conferencia,
     create_inscricao,
     create_participante,
@@ -15,7 +15,7 @@ from inscricoes.crud import (
     update_inscricao,
     update_participante,
 )
-from inscricoes.model import Conferencia, Inscricao, Participante, get_sql_engine
+from inscricoes.db.model import Conferencia, Inscricao, Participante, get_sql_engine
 
 
 # Setup a test database
