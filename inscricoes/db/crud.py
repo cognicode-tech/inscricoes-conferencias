@@ -33,7 +33,7 @@ def read_conferencia(conferencia_id: int, engine=None):
 def read_conferencias(engine=None):
     engine = get_sql_engine() if engine is None else engine
     with Session(engine) as session:
-        return session.exec(select(Conferencia)).all()
+        return session.exec(select(Conferencia).order_by(Conferencia.id.desc())).all()
 
 
 def read_inscricao(inscricao_id: int, engine=None):
