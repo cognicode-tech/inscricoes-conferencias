@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Tables {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="page-breadcrumb">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-8 align-self-center">
+                <a href="/nova-conferencia"
+                class="btn btn-cyan d-none d-md-inline-block text-white">
+                Nova Conferência        
+             </a>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+        <!-- ============================================================== -->
+        <!-- Start Page Content -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <!-- column -->
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Conferências</h4>
+                        <h6 class="card-subtitle">Conferências cadastradas</h6>
+                        <div class="table-responsive">
+                            <table class="table user-table">
+                                <thead>
+                                    <tr>
+                                        <th class="border-top-0">Nome</th>
+                                        <th class="border-top-0">Data</th>
+                                        <th class="border-top-0">Local</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for conferencia in conferencias %}
+                                    <tr>
+                                        <td>{{ conferencia.nome }}</td>
+                                        <td>{{ conferencia.data }}</td>
+                                        <td>{{ conferencia.local }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End PAge Content -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Right sidebar -->
+        <!-- ============================================================== -->
+        <!-- .right-sidebar -->
+        <!-- ============================================================== -->
+        <!-- End Right sidebar -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+
+{% endblock content %}
+
+{% block javascripts %}{% endblock javascripts %}
