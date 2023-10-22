@@ -1,6 +1,7 @@
 from sqlmodel import Session, select
 
 from inscricoes.db.model import Conferencia, Inscricao, Participante, get_sql_engine
+from inscricoes.logger import logger
 
 
 def create_conferencia(conferencia: Conferencia, engine=None):
@@ -115,6 +116,8 @@ def delete_conferencia(conferencia_id: int, engine=None):
         session.delete(session.get(Conferencia, conferencia_id))
         session.commit()
 
+    logger.info(f"Conferencia {conferencia_id} excluída com sucesso")
+
 
 def delete_inscricao(inscricao_id, engine=None):
     engine = get_sql_engine() if engine is None else engine
@@ -122,9 +125,13 @@ def delete_inscricao(inscricao_id, engine=None):
         session.delete(session.get(Inscricao, inscricao_id))
         session.commit()
 
+    logger.info(f"Inscrição {inscricao_id} excluída com sucesso")
+
 
 def delete_participante(participante_id, engine=None):
     engine = get_sql_engine() if engine is None else engine
     with Session(engine) as session:
         session.delete(session.get(Participante, participante_id))
         session.commit()
+
+    logger.info(f"Participante {participante_id} excluído com sucesso")
