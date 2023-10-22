@@ -9,6 +9,7 @@ def create_conferencia(conferencia: Conferencia, engine=None):
     with Session(engine) as session:
         session.add(conferencia)
         session.commit()
+        session.refresh(conferencia)
 
     logger.info(f"Conferencia {conferencia.id} criada com os dados: {conferencia}")
 

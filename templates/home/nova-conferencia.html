@@ -94,7 +94,7 @@
         }
         
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/create_conference");
+        xhr.open("POST", "/api/create_conference");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify(jsonData));
         
