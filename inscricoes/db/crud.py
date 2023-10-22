@@ -10,6 +10,8 @@ def create_conferencia(conferencia: Conferencia, engine=None):
         session.add(conferencia)
         session.commit()
 
+    logger.info(f"Conferencia {conferencia.id} criada com os dados: {conferencia}")
+
 
 def create_inscricao(inscricao: Inscricao, engine=None):
     engine = get_sql_engine() if engine is None else engine
@@ -78,6 +80,10 @@ def update_conferencia(conferencia_id: int, conferencia: Conferencia, engine=Non
         session.add(db_conferencia)
         session.commit()
         session.refresh(db_conferencia)
+
+        logger.info(
+            f"Conferencia {conferencia_id} atualizada com os valores: {conferencia_data}"
+        )
 
 
 def update_inscricao(inscricao_id: int, inscricao: Inscricao, engine=None):

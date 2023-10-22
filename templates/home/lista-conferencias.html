@@ -48,10 +48,14 @@
                                 </thead>
                                 <tbody>
                                     {% for conferencia in conferencias %}
-                                    <tr>
+                                    <tr data-conference-id="{{ conferencia.id }}">
                                         <td>{{ conferencia.nome }}</td>
                                         <td>{{ conferencia.data }}</td>
                                         <td>{{ conferencia.local }}</td>
+                                        <td>
+                                            <button class="update-btn">Atualizar</button>
+                                            <button class="delete-btn">Remover</button>
+                                        </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -78,4 +82,36 @@
 
 {% endblock content %}
 
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+<script>
+window.onload = function() {
+    var deleteButtons = document.getElementsByClassName('delete-btn');
+    var updateButtons = document.getElementsByClassName('update-btn');
+
+    for (var i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].addEventListener('click', function(e) {
+            var conferenciaId = e.target.parentElement.parentElement.dataset.conferenceId;
+            var confirmation = confirm('Você tem certeza que deseja remover esta Conferência?');
+            if (confirmation) {
+                fetch('/delete/conferencia/' + conferenciaId, {
+                    method: 'DELETE'
+                }).then(function(response) {
+                    if (response.ok) {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        console.log('Delete request failed');
+                    }
+                });
+            }
+        });
+
+        updateButtons[i].addEventListener('click', function(e) {
+            var conferenciaId = e.target.parentElement.parentElement.dataset.conferenceId;
+            window.location.href = '/update/?objeto=conferencia&objeto_id=' + conferenciaId;
+        });
+    }
+};
+</script>
+{% endblock javascripts %}
