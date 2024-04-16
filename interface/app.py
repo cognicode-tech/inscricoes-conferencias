@@ -86,7 +86,7 @@ async def page2(q: Q):
         ui.inline(justify='between', items=[
             ui.textbox(name='register-name_textbox', label='Nome', width='300px'),
             ui.textbox(name='register-age_textbox', label='Idade', width='150px'),
-            ui.dropdown(name='register-gender', label='Gender', placeholder='Selecione', 
+            ui.dropdown(name='register-gender', label='Sexo', placeholder='Selecione', 
             choices=[
                 ui.choice(name='gender-M', label='M'),
                 ui.choice(name='gender-F', label='F'),
@@ -221,7 +221,7 @@ async def init(q: Q) -> None: #CHANGED
             ),
         ],
         items=[
-            ui.persona(title='Carol Coelho', subtitle='League of Legends Bronze', size='xs', image='AccountBrowser'),
+            ui.persona(title='User', subtitle='Developer', size='xs', image='AccountBrowser'),
         ]
     )
 
