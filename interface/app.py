@@ -1,14 +1,10 @@
 from h2o_wave import main, app, Q, ui, on, run_on, data
 from typing import Optional, List
 
-
-# Use for page cards that should be removed when navigating away.
-# For pages that should be always present on screen use q.page[key] = ...
 def add_card(q, name, card) -> None:
     q.client.cards.add(name)
     q.page[name] = card
 
-# Remove all the cards related to navigation.
 def clear_cards(q, ignore: Optional[List[str]] = []) -> None:
     if not q.client.cards:
         return
@@ -18,23 +14,22 @@ def clear_cards(q, ignore: Optional[List[str]] = []) -> None:
             del q.page[name]
             q.client.cards.remove(name)
 
-@on('#page1') #CHANGED
-async def page1(q: Q):
-    q.page['sidebar'].value = '#page1'
-    clear_cards(q)  # When routing, drop all the cards except of the main ones (header, sidebar, meta).
+# Alterei alguns botões para 'link' para abrir na mesma aba, estou buscando uma forma de trocar a cor dele, ainda não achei na documentação
+@on('#conferencias-inicio')
+async def page_conferencias_inicio(q: Q):
+    q.page['sidebar'].value = '#conferencias-inicio'
+    clear_cards(q)
 
-    # New: top right button added "Nova conferência"
-    add_card(q, 'button', ui.form_card(box='horizontal', items = [
-        ui.button (name='button', label='Nova Conferência', icon='CirclePlus', primary=True)
+    add_card(q, 'button', ui.form_card(box='horizontal', items=[
+        #ui.button (name='button', label='Nova Conferência', icon='CirclePlus', primary=True, path='#conferencias-registro'),
+        ui.link(name='link_button', label='Nova Conferência', path='#conferencias-registro', target='_self', button=True)
     ]))
 
-    # New: Action Section present in the Column (Ação)
     commands = [
         ui.command(name='details', label='Details', icon='Info'),
         ui.command(name='delete', label='Delete', icon='Delete'),
     ]
 
-    # New: Row of conferences listed as placeholders (Nome, Data, Local, Ações) 
     add_card(q, 'table', ui.form_card(box='vertical', items=[
     ui.table(
         name='table',
@@ -51,14 +46,37 @@ async def page1(q: Q):
         ],)
     ]))
 
-@on('#page2') #CHANGED
-async def page2(q: Q):
-    q.page['sidebar'].value = '#page2'
-    clear_cards(q)  # When routing, drop all the cards except of the main ones (header, sidebar, meta).
+# O date_picker está em inglês, e ainda não encontrei meios de transformar ele para português ou apenas numeros.
+@on('#conferencias-registro')
+async def page_conferencias_inscricao(q: Q):
+    q.page['sidebar'].value = '#conferencias-registro'
+    clear_cards(q)
 
-    # New: Conference and Person Register Section
-    # Inline to put the elements side to side
-    # Values of width and weight are fixed as for now, until i realize how to scale them with the screen   
+    add_card(q, 'button', ui.form_card(box='vertical', items=[
+        ui.inline(justify='between', items=[
+            ui.text_xl(name='title_conf', content='Conferências'),
+            ui.button (name='button_sup', icon='AddPhone',label='Suporte', path='#page4'),
+        ]),
+    ]))
+
+    add_card(q, 'form', ui.form_card(box='vertical', items = [ 
+        ui.text_xl(name='register_conf_title', content='Nova Conferência'),
+        ui.text_s(name='register_conf_subtitle', content='Preencha os detalhes do evento'),
+        ui.textbox(name='conf_name_register_textbox', label='Nome'),
+        ui.date_picker(name='conf_date_register_picker', label='Date'),
+        ui.textbox(name='conf_city_register_textbox', label='Local'),
+        ui.text_xl(name='space-text', content=''),
+        ui.inline(justify='center', items=[
+            #ui.button (name='button', label='Criar Conferência', icon='AcceptMedium', primary=True),
+            ui.link(name='link_button', label='Nova Conferência', path='#conferencias-inicio', target='_self', button=True)
+        ]),
+    ])) 
+
+@on('#conferencias-inscricao') 
+async def conferencias_inscricao(q: Q):
+    q.page['sidebar'].value = '#conferencias-inscricao'
+    clear_cards(q) 
+ 
     add_card(q, 'form', ui.form_card(box='horizontal', items = [ 
         ui.text_xl(name='register_title', content='Nova Inscrição'),
         ui.text_s(name='register_subtitle', content='Preencha os detalhes da inscrição'),
@@ -86,7 +104,7 @@ async def page2(q: Q):
         ui.inline(justify='between', items=[
             ui.textbox(name='register-name_textbox', label='Nome', width='300px'),
             ui.textbox(name='register-age_textbox', label='Idade', width='150px'),
-            ui.dropdown(name='register-gender', label='Sexo', placeholder='Selecione', 
+            ui.dropdown(name='register-gender', label='Gender', placeholder='Selecione', 
             choices=[
                 ui.choice(name='gender-M', label='M'),
                 ui.choice(name='gender-F', label='F'),
@@ -101,10 +119,9 @@ async def page2(q: Q):
         ]),
     ]))   
 
-
-@on('#page3')
-async def page3(q: Q):
-    q.page['sidebar'].value = '#page3'
+@on('#conferencias-relatorios')
+async def conferencias_relatorios(q: Q):
+    q.page['sidebar'].value = '#conferencias-relatorios'
     clear_cards(q)  # When routing, drop all the cards except of the main ones (header, sidebar, meta).
 
     add_card(q, 'form', ui.form_card(box='horizontal', items = [
@@ -114,16 +131,12 @@ async def page3(q: Q):
     for i in range(12):
         add_card(q, f'item{i}', ui.wide_info_card(box=ui.box('grid', width='400px'), name='', icon='ReportWarning', title=f'Conferencia {i+1}', caption='Lorem ipsum dolor sit amet'))
 
-@on('#page4')
-@on('page4_reset')
-async def page4(q: Q):
-    q.page['sidebar'].value = '#page4'
-    # When routing, drop all the cards except of the main ones (header, sidebar, meta).
-    # Since this page is interactive, we want to update its card
-    # instead of recreating it every time, so ignore 'form' card on drop.
+@on('#duvidas')
+@on('duvidas_reset')
+async def duvidas(q: Q):
+    q.page['sidebar'].value = '#duvidas'
     clear_cards(q, ['form'])
 
-    # If first time on this page, create the card.
     add_card(q, 'form', ui.form_card(box='vertical', items=[
         ui.stepper(name='stepper', items=[
             ui.step(label='Step 1'),
@@ -137,7 +150,7 @@ async def page4(q: Q):
     ]))
 
 @on()
-async def page4_step2(q: Q):
+async def duvidas_step2(q: Q):
     # Just update the existing card, do not recreate.
     q.page['form'].items = [
         ui.stepper(name='stepper', items=[
@@ -152,7 +165,7 @@ async def page4_step2(q: Q):
     ]
 
 @on()
-async def page4_step3(q: Q):
+async def duvidas_step3(q: Q):
     # Just update the existing card, do not recreate.
     q.page['form'].items = [
         ui.stepper(name='stepper', items=[
@@ -166,18 +179,17 @@ async def page4_step3(q: Q):
         ])
     ]
 
-@on('#page5')
-async def page3(q: Q):
-    q.page['sidebar'].value = '#page5'
-    clear_cards(q)  # When routing, drop all the cards except of the main ones (header, sidebar, meta).
+@on('#sair')
+async def sair(q: Q):
+    q.page['sidebar'].value = '#sair'
+    clear_cards(q)
 
-    for i in range(12):
-        add_card(q, f'item{i}', ui.wide_info_card(box=ui.box('grid', width='400px'), name='', title='Tile',
-                                                  caption='Lorem ipsum dolor sit amet'))
-
-# NEW: default theme, tried a personalized one, but the values seemed off, almost like they were "mixed", so i couldnt find a good balance
-async def init(q: Q) -> None: #CHANGED
-    q.page['meta'] = ui.meta_card(box='', theme='solarized' ,layouts=[ui.layout( breakpoint='xs', min_height='100vh', zones=[
+    add_card(q, 'button', ui.form_card(box='horizontal', items=[
+        ui.link(name='exit_button', label='Retornar', path='#conferencias-inicio', target='_self', button=True)
+    ]))
+    
+async def init(q: Q) -> None:
+    q.page['meta'] = ui.meta_card(box='', theme='solarized', title='Conferências',icon='AddGroup', layouts=[ui.layout( breakpoint='xs', min_height='100vh', zones=[
         ui.zone('main', size='1', direction=ui.ZoneDirection.ROW, zones=[
             ui.zone('sidebar', size='250px'),
             ui.zone('body', zones=[
@@ -190,21 +202,21 @@ async def init(q: Q) -> None: #CHANGED
             ]),
         ])
     ])])
-    
+
     # New: side bar names, design and icons
     # New section of help and exit(new #page5)
     q.page['sidebar'] = ui.nav_card(
     box='sidebar',color='primary', title='Conferências', subtitle="Sistema de Gerenciamento",
-    value=f'#{q.args["#"]}' if q.args['#'] else '#page1',
+    value=f'#{q.args["#"]}' if q.args['#'] else '#conferencias-inicio',
     items=[
         ui.nav_group('Menu', items=[
-            ui.nav_item(name='#page1',label='Conferências', icon='Globe'),
-            ui.nav_item(name='#page2', label='Inscrições',icon='UserFollowed'),
-            ui.nav_item(name='#page3', label='Relatórios',icon='DietPlanNotebook'),
+            ui.nav_item(name='#conferencias-inicio',label='Conferências', icon='Globe'),
+            ui.nav_item(name='#conferencias-inscricao', label='Inscrições',icon='UserFollowed'),
+            ui.nav_item(name='##conferencias-relatorios', label='Relatórios',icon='DietPlanNotebook'),
         ]),
             ui.nav_group('Ajuda', items=[
-            ui.nav_item(name='#page4', label='Duvidas',icon='Info'),
-            ui.nav_item(name='#page5', label='Sair', icon='PowerButton'),
+            ui.nav_item(name='#duvidas', label='Duvidas',icon='Info'),
+            ui.nav_item(name='#sair', label='Sair', icon='PowerButton'),
         ]),
     ])
 
@@ -225,9 +237,8 @@ async def init(q: Q) -> None: #CHANGED
         ]
     )
 
-    # If no active hash present, render page1.
     if q.args['#'] is None:
-        await page1(q)
+        await page_conferencias_inicio(q)
 
 @app('/')
 async def serve(q: Q):
