@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from datetime import datetime
 from functools import lru_cache
 from typing import Optional
@@ -49,3 +50,5 @@ class Inscricao(SQLModel, table=True):
     pg_deposito: Optional[float] = Field(default=0.0)
     pg_pendencias: Optional[float] = Field(default=0.0)
     observacoes: Optional[str] = Field(default="")
+=======
+>>>>>>> Stashed changes

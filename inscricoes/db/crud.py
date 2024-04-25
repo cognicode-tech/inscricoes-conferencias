@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from sqlmodel import Session, select
 
 from inscricoes.db.model import Conferencia, Inscricao, Participante, get_sql_engine
@@ -142,3 +143,6 @@ def delete_participante(participante_id, engine=None):
         session.commit()
 
     logger.info(f"Participante {participante_id} excluído com sucesso")
+=======
+from sqlmodel import Session, select
+>>>>>>> Stashed changes
