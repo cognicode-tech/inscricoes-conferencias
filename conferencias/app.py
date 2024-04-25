@@ -1,10 +1,13 @@
 import time
-from h2o_wave import main, app, Q, ui, on, run_on 
 
-from conferencias.pages import conferencias_inscricao, conferencias_inicio
-from conferencias.pages import ConferenceList
-from db_test import create_conferencia
+from h2o_wave import Q, app, main, run_on, ui
 
+from conferencias.db_test import create_conferencia
+from conferencias.pages import ConferenceList, conferencias_inicio
+
+
+def donothing():
+    main
 
 @app("/")
 async def serve(q: Q):
