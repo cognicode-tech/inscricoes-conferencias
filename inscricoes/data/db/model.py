@@ -4,18 +4,21 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel, create_engine
 
-from inscricoes.settings import DB_ENGINE_URL
-
+from inscricoes.data.settings import DB_ENGINE_URL
 
 @lru_cache
 def get_sql_engine(engine_url: str | None = None, db_name: str = "inscricoes"):
     engine_url = DB_ENGINE_URL if engine_url is None else engine_url
     engine = create_engine(engine_url, echo=False)
     SQLModel.metadata.create_all(engine)
-
     return engine
 
-
+class Conferencia(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nome: str
+    data: str
+    local: str
+    
 class Participante(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     nome: str
@@ -25,14 +28,6 @@ class Participante(SQLModel, table=True):
     tipo_inscricao: str
     valor_inscricao: float
     inscricao_id: int = Field(foreign_key="inscricao.id")
-
-
-class Conferencia(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    nome: str
-    data: str
-    local: str
-
 
 class Inscricao(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

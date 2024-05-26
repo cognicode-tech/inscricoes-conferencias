@@ -4,7 +4,7 @@ import sys
 
 from loguru import logger
 
-from inscricoes.settings import LOG_LEVEL
+from inscricoes.data.settings import LOG_LEVEL
 
 
 class InterceptHandler(logging.Handler):
