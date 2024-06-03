@@ -2,6 +2,7 @@ from h2o_wave import main, app, Q, ui, on, run_on
 from typing import Optional, List
 
 from inscricoes.data.logger import logger
+from inscricoes.data.db.crud import read_multiple_conferences, read_single_conference
 
 # Add a card to the page.
 def add_card(q, name, card) -> None:
@@ -44,7 +45,7 @@ def utils_participant_list_values_assert(q: Q, participante_pay):
 def utils_participant_list_values(q: Q):
     pagamento_total = 0
     cont = 0
-    participantes = q.client.rows     
+    participantes = q.client.participant_list    
     lista_participantes = [list(value for value in vars(participant).values()) for participant in participantes]
     for _, participante in enumerate(lista_participantes):
         if participante[4] == "Completo":
@@ -55,7 +56,7 @@ def utils_participant_list_values(q: Q):
 # Unpack and get the selected Index and row from the table
 def utils_participant_list_edit(q: Q, id_row):
     # Unpack and get the selected row from the table
-    lista_participantes = [list(value for value in vars(participant).values()) for participant in q.client.rows]
+    lista_participantes = [list(value for value in vars(participant).values()) for participant in q.client.participant_list]
     index = next((i for i, sublist in enumerate(lista_participantes) if sublist[0] == id_row), None)
     for _, participante in enumerate(lista_participantes):
         if participante[0] == id_row:
@@ -77,3 +78,12 @@ class ParticipantList:
         self.type_register = type_register
         self.value = value
         self.free_pay = free_pay
+        
+
+def utils_get_single_conference(id_row):
+    conference = read_single_conference(id_row)
+    return conference
+    
+def utils_get_multiple_conferences():
+    conferences=read_multiple_conferences()
+    return conferences

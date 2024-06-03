@@ -1,6 +1,7 @@
 from h2o_wave import main, app, Q, ui, on, run_on
 
-from inscricoes.layout import setup_function
+# layout
+from inscricoes.layout import setup_app_layout
 
 # Utilities
 from inscricoes.utilities.handlers import main
@@ -10,8 +11,11 @@ async def serve(q: Q):
     # Run only once per client connection.
     if not q.client.initialized:
         q.client.cards = set()
-        q.client.rows = []
-        await setup_function(q)
+        # initialize the participant list
+        q.client.participant_list = []
+        # initialize the layout
+        await setup_app_layout(q)
+        
         q.client.initialized = True
         await init(q)
     
@@ -70,4 +74,4 @@ async def init(q: Q) -> None:
     )
     
     if q.args['#'] is None:
-        await setup_function(q)
+        await setup_app_layout(q)

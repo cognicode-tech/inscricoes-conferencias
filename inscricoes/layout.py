@@ -1,11 +1,8 @@
 from h2o_wave import main, app, Q, ui, on, run_on
 
 # Utilities
-from inscricoes.utilities.utils import add_card, clear_cards
-
-# Database
-from inscricoes.data.db.crud import read_multiple_conferences
-
+from inscricoes.utilities.utils import (add_card, clear_cards, 
+                                        utils_get_multiple_conferences)
 
 @on('#conferencias-inicio')
 async def conferencias_inicio(q: Q):
@@ -21,10 +18,10 @@ async def conferencias_inicio(q: Q):
         )
     )
     
-    await conferencias_inicio_table(q)
+    await conferencias_inicio_table(q, conferences=utils_get_multiple_conferences())
 
 # Update the Main Page Table
-async def conferencias_inicio_table(q: Q):   
+async def conferencias_inicio_table(q: Q, conferences):
     return add_card(
         q, 
         'main_conference_table',
@@ -49,7 +46,7 @@ async def conferencias_inicio_table(q: Q):
                             )
                         ),
                     ],
-                    rows=[ui.table_row(name=str(r.id), cells=[r.nome, r.data, r.local]) for r in read_multiple_conferences()] if read_multiple_conferences() is not None else []
+                    rows=[ui.table_row(name=str(r.id), cells=[r.nome, r.data, r.local]) for r in conferences] if conferences is not None else []
                 )
             ]
         )
@@ -111,7 +108,7 @@ async def conferencias_inscricao(q: Q):
                 ui.text_s(name='register_subtitle', content='Preencha os detalhes da inscrição'),
                 ui.dropdown(name='register_select_conference',label='Conferência', placeholder='Selecione a conferência...',
                     choices=[
-                        ui.choice(name=str(conf.id), label=conf.nome) for conf in read_multiple_conferences()
+                        ui.choice(name=str(conf.id), label=conf.nome) for conf in utils_get_multiple_conferences()
                     ]   
                 ),
                 ui.inline(justify='between', items=[ 
@@ -179,7 +176,7 @@ async def conferencias_inscricao_table(q: Q):
                             )
                         )
                     ],
-                    rows=[ui.table_row(name=str(r.id), cells=[r.name, r.age, r.gender, r.type_register, f'R$ {r.value}' if r.type_register != 'Isento' else 'R$ 0.0']) for r in q.client.rows] if q.client.rows is not None else []
+                    rows=[ui.table_row(name=str(r.id), cells=[r.name, r.age, r.gender, r.type_register, f'R$ {r.value}' if r.type_register != 'Isento' else 'R$ 0.0']) for r in q.client.participant_list] if q.client.participant_list is not None else []
                 ),
             ]
         )
@@ -203,18 +200,9 @@ async def conferencia_inscricoes_values(q: Q):
     )
 
 
-
-
-
-
-
-
-
-
-
-
-
-async def setup_function(q: Q):
+async def setup_app_layout(q: Q):
+    conference_list=utils_get_multiple_conferences()
+    
     q.page['sidebar'].value = '#conferencias-inicio'
     clear_cards(q)
 
@@ -244,13 +232,14 @@ async def setup_function(q: Q):
                             cell_type=ui.menu_table_cell_type(
                             name='commands',
                             commands=[
-                                ui.command(name='edit_conference_table_row', label='Editar'),
-                                ui.command(name='delete_conference_table_row', label='Deletar'),
+                                ui.command(name='main_conference_edit_table_row', label='Editar'),
+                                ui.command(name='main_conference_delete_table_row', label='Deletar'),
                                 ]
                             )
                         ),
                     ],
-                    rows=[ui.table_row(name=str(r.id), cells=[r.nome, r.data, r.local]) for r in read_multiple_conferences()] if read_multiple_conferences() is not None else []
+                    rows=[ui.table_row(name=str(r.id), cells=[r.nome, r.data, r.local]) for r in conference_list] if conference_list is not None else []
+                    #rows=[ui.table_row(name=str(r.id), cells=[r.nome, r.data, r.local]) for r in read_multiple_conferences()] if read_multiple_conferences() is not None else []
                 )
             ]
         )
