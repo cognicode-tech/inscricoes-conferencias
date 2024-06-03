@@ -1,7 +1,6 @@
 from datetime import datetime
 from h2o_wave import main, app, Q, ui, on, run_on, copy_expando
 
-
 # Layout
 from inscricoes.layout import (conferencias_inicio, conferencias_inicio_table,
                                conferencias_inscricao, conferencias_inscricao_table, conferencia_inscricoes_values)
@@ -16,7 +15,8 @@ from inscricoes.data.db.crud import (create_conferencia, delete_conferencia, upd
 
 # Utilities
 from inscricoes.utilities.utils import (utils_verify_invalid_item, utils_participant_list_values_assert,
-                                        utils_participant_list_values, utils_participant_list_edit, ParticipantList)
+                                        utils_participant_list_values, utils_participant_list_edit, ParticipantList,
+                                        utils_get_multiple_conferences)
 
 # Settings
 from inscricoes.data.logger import logger
@@ -46,14 +46,15 @@ async def add_conference_table(q: Q):
         
     except AttributeError as AtrErr:
         logger.info(f"Error:{AtrErr}")
-    
+ 
     await conferencias_inicio(q)
+    await conferencias_inicio_table(q, conferences=utils_get_multiple_conferences())
 
 # Deletes a conference row from the database.   
 @on('main_conference_delete_table_row')
 async def delete_conference_table_row(q: Q):
     delete_conferencia(q.args.main_conference_delete_table_row)
-    await conferencias_inicio_table(q)
+    await conferencias_inicio_table(q, conferences=utils_get_multiple_conferences())
     
 @on('main_conference_edit_table_row')
 async def edit_conference_table_row(q: Q):
@@ -80,7 +81,7 @@ async def submit_edit_conference(q: Q):
         
     # Closes the LightBox and Refresh the page.
     await box_exit(q)
-    await conferencias_inicio_table(q)
+    await conferencias_inicio_table(q, conferences=utils_get_multiple_conferences())
 
 # --------------------- PARTICIPANTS SECTION ------------------- #
 
@@ -93,7 +94,7 @@ async def call_create_participant_box(q: Q):
     box_participant_add(q)
 
 @on('participant_add_submit_button')
-async def add_participant_to_table(q: Q):
+async def add_participant_to_table(q: Q): #OK
     participante_data = [q.args.participant_add_name, q.args.participant_add_age,
             q.args.participant_add_gender, q.args.participant_add_pay_type, 
                 q.args.participant_add_pay_value]
@@ -106,7 +107,7 @@ async def add_participant_to_table(q: Q):
              
             # Verify if there are None or empty values in participante.        
             if not utils_verify_invalid_item(q, participante_data):
-                q.client.rows.append(ParticipantList(participante_dict['name'], participante_dict['age'], 
+                q.client.participant_list.append(ParticipantList(participante_dict['name'], participante_dict['age'], 
                                                     participante_dict['gender'], participante_dict['pay_type'], 
                                                     participante_dict['pay_value'], True if participante_data[3] == "Isento" else False))
 
@@ -126,7 +127,7 @@ async def add_participant_to_table(q: Q):
 # Delete the participant in the local table removing the selected row.
 @on('participant_delete_row')
 async def delete_participant_table_row(q: Q):
-    q.client.rows = [row for row in q.client.rows if row.id != q.args.participant_delete_row]
+    q.client.participant_list = [row for row in q.client.participant_list if row.id != q.args.participant_delete_row]
     logger.info(f"Participant {q.args.participant_delete_row} deleted")
     
     # Refresh the values of payments and participants in the page.
@@ -175,7 +176,7 @@ async def edit_participant_values(q: Q):
         if not utils_verify_invalid_item(q, participante_data):
             
             # Change the label of the gender and pay type.        
-            q.client.rows[selected_list[0]] = ParticipantList(participante_dict['name'], participante_dict['age'], 
+            q.client.participant_list[selected_list[0]] = ParticipantList(participante_dict['name'], participante_dict['age'], 
                                                     participante_dict['gender'], participante_dict['pay_type'], 
                                                     participante_dict['pay_value'], True if participante_data[3] == "Isento" else False)
             
@@ -203,7 +204,7 @@ async def submit_conference_registration(q: Q):
     
         #TODO - Fix the behaviour of this function (it's changed to always return False at this moment)
         if not utils_verify_invalid_item(q, total_conference_data[0:3]):
-            participantes = q.client.rows     
+            participantes = q.client.participant_list    
             lista_participantes = [list(value for value in vars(participant).values()) for participant in participantes]
             for _, participante in enumerate(lista_participantes):
                 participant_list.append(participante)

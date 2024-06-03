@@ -1,14 +1,14 @@
 from datetime import datetime
 from h2o_wave import main, app, Q, ui, on, run_on 
 
-# Database
-from inscricoes.data.db.crud import read_single_conference
+# Utilities
+from inscricoes.utilities.utils import utils_get_single_conference
 
 # Section to show to the user the LightBox for editing conference.
 def box_conference_edit(q: Q, id_row):
-    detalhes_conferencia = read_single_conference(id_row)
+    detalhes_conferencia = utils_get_single_conference(id_row)
     detalhes_conferencia_data = datetime.strptime(detalhes_conferencia.data, '%d/%m/%Y').strftime('%Y-%m-%d')
- 
+    
     q.page['meta'].dialog = ui.dialog(title='Edite as informações da Conferência', blocking=True, items=[
             ui.text_xl(name='box_conference_edit_title', content='Nova Conferência'),
             ui.textbox(name='box_conference_edit_name', label='Nome', value=detalhes_conferencia.nome),
